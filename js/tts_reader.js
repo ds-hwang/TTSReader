@@ -185,7 +185,7 @@
 		options = JSON.parse(localStorage.getItem("options")); //must fix
 		if(options.voice == 'TTS Reader'  || options.voice == 'iSpeech')
 		{
-			speakIt(filterText(textstack));
+			ttsRead(filterText(textstack));
 		}
 		else
 		{
@@ -297,7 +297,7 @@
 			{
 				if(options.voice == 'TTS Reader'  || options.voice == 'iSpeech')
 				{
-					speakIt(filterText(selection.selectionText.toString()));
+					ttsRead(filterText(selection.selectionText.toString()));
 				}
 				else
 				{
@@ -361,7 +361,7 @@
 							if(text.length && text[0] != '')
 							{
 								nowPlaying();
-								speakIt(text);
+								ttsRead(text);
 							}
 						}
 					}
@@ -388,7 +388,7 @@
  * TTS Reader core function - Use It Wisely :) :)
  * ---------------------------------------------------------------------------------------------------------------------
 */
-	function speakIt(text)
+	function ttsRead(text)
 	{
 	    chrome.tabs.detectLanguage(null,function(lang) //detect page language
 		{
@@ -601,7 +601,7 @@
 	{
 	    // sendTtsEvent({'event_type': 'start', 'charIndex': 0})
 		nowPlaying();
-		speakIt(filterText(utterance));
+		ttsRead(filterText(utterance));
 	    //sendTtsEvent({'event_type': 'end', 'charIndex': utterance.length})
 	};
 
