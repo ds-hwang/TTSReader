@@ -158,8 +158,8 @@ function drawVolume(volume) {
 		);
 
 	var rad = context.createRadialGradient(center[0], center[1], radius - 5, center[0], center[1], radius + 5);
-	rad.addColorStop(0, 'rgb(51, 38, 235)');
-	rad.addColorStop(1, 'rgb(5, 0, 71)');
+	rad.addColorStop(0, 'rgb(69, 131, 241)');
+	rad.addColorStop(1, 'rgb(0, 81, 221)');
 
 	context.lineWidth = 10;
 	context.strokeStyle = rad;

@@ -3,7 +3,7 @@
         "page": "tts_reader.html"
     },
     "browser_action": {
-        "default_icon": "small_icon.png",
+        "default_icon": "images/ttsreader_smallicon.png",
         "default_popup": "popup.html",
         "default_title": "__MSG_title__"
     },
@@ -23,8 +23,8 @@
     "default_locale": "en",
     "description": "__MSG_desc__",
     "icons": {
-        "128": "images/icon.png",
-        "16": "small_icon.png"
+        "128": "images/ttsreader_bigicon.png",
+        "16": "images/ttsreader_smallicon.png"
     },
     "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDABrGGT8K54o9aUtrqROVRW4IIw1TYylqwqD8X4FWFdWNFNLvbjhemOZkO4DyaaBOnv4zv/1rg8Ix5k/RLdfuAyye0JJi2mLHckUvC3dUscfwCx9ap+iARLAZvu/RhoRm5okk7PvSHTBmGvyBNvDlObapH2+GBk/rsXkejU0H5twIDAQAB",
     "manifest_version": 2,
