@@ -21,7 +21,6 @@
 		reload = document.getElementById('reload'),
 		canvas = document.getElementById('volume'),
 		error = document.getElementById('error'),
-		logo = document.getElementById('logo'),
 		replaybtn = document.getElementById("replay"),
 		play = document.getElementById("play"),
 		options = JSON.parse(localStorage.getItem("options"));
@@ -73,12 +72,6 @@
 		// goes to Google TTS API and check if human confirmation is required
 		chrome.tabs.create({url: 'http://goo.gl/OOVgp'});
 	}, false);
-
-	logo.addEventListener('click', function()
-	{
-		// redirect's to iSpeech TTS Reader page
-		chrome.tabs.create({url: 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BEF44G79J2WVG'});
-	});
 
 /*
  * -----------------------------------------------------------------------------
@@ -223,23 +216,9 @@ function calculateVolume(x,y)
 
 /*
  * -----------------------------------------------------------------------------
- * Display donations button if it's not disabled from options
- * -----------------------------------------------------------------------------
-*/
-function showLogo()
-{
-	if(options.logo)
-	{
-		logo.style.display = "block";
-	}
-}
-
-/*
- * -----------------------------------------------------------------------------
  * Initalization on main and background functions
  * -----------------------------------------------------------------------------
 */
-	showLogo();
 	bg.getSelection(); // invoke TTS Reader main function
 	sendState(bg.getState());
 	drawVolume(options.volume);

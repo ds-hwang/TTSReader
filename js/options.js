@@ -13,8 +13,7 @@
 		vars = [
 					'rate','test', 'rateps', 'irateps', 'pitch', 'voice', 'ivoice', 'volume', 'context', 'speechinput',
 					'words', 'iwords', 'lang_voices', 'hotkeys', 'enqueue', 'percents', 'testtext', 'language', 'hotkey',
-					'lang_voices', 'irate','options_title', 'logo', 'app_logo', 'lang_paypalinfo', 'paypal_coffee',
-					'paypal_new_version', 'paypal_supporter'
+					'lang_voices', 'irate','options_title', 'app_logo'
 				];
 /*
  * ---------------------------------------------------------------------------------------------------------------------
@@ -91,11 +90,6 @@ function init_listeners()
 		save_options();
 	});
 
-	element.logo.addEventListener('change', function()
-	{
-		save_options();
-	});
-
 	element.ivoice.addEventListener('change', function()
 	{
 		save_options();
@@ -128,22 +122,6 @@ function init_listeners()
 		element.iwords.innerHTML = (parseInt(this.value)+11)*30;
 		save_options();
 	}, false);
-
-
-	element.paypal_coffee.addEventListener('click', function()
-	{
-		chrome.tabs.create({url: 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BEF44G79J2WVG'});
-	});
-
-	element.paypal_new_version.addEventListener('click', function()
-	{
-		chrome.tabs.create({url: 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LLKXAZSPAAYSG'});
-	});
-
-	element.paypal_supporter.addEventListener('click', function()
-	{
-		chrome.tabs.create({url: 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5XURK4UZ6A9NA'});
-	});
 }
 /*
  * ---------------------------------------------------------------------------------------------------------------------
@@ -214,7 +192,6 @@ function save_options()
 		pitch :  element.pitch.value,
 		enqueue :  element.enqueue.checked,
 		speechinput : element.speechinput.checked,
-		logo : element.logo.checked,
 		context: element.context.checked,
 		hotkeys: element.hotkey,
 		volume : parseFloat(element.volume.value/100)
@@ -247,10 +224,6 @@ function restore_options()
 	element.irateps.innerHTML = 'x'+irate.value
 	element.words.innerHTML = (200*rate.value).toFixed(0);
 	element.iwords.innerHTML = 30*(parseInt(irate.value)+11);
-	element.logo.checked = options.logo;
-
-	//dspl_info = (options.logo)? 'none' : 'block';
-	//element['lang_paypalinfo'].style.display = dspl_info;
 }
 
 /*

@@ -300,32 +300,3 @@ input[type='range']::-webkit-slider-thumb::before {
 		text-decoration: none;
 		color:#303942;
 	}
-
-#paypalinfo
-{
-	margin:10px 0px 0px 0px;
-	font-size:120%;
-}
-#donations
-{
-	padding:10px;
-}
-	#donations > div
-	{
-		width:151px;
-		height:30px;
-		cursor:pointer;
-		display:inline-block;
-	}
-	#donations #paypal_coffee
-	{
-		background:url('/images/donate-button-small.png');
-	}
-	#donations #paypal_new_version
-	{
-		background:url('/images/version-button.png');
-	}
-	#donations #paypal_supporter
-	{
-		background:url('/images/supporter-button.png');
-	}

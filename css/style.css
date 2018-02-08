@@ -29,16 +29,6 @@ body {
 	margin:5px 0px 5px 0px;
 }
 
-#logo
-{
-	width:150px;
-	height:37px;
-	background: url(../images/donate-button-small.png) no-repeat;
-	margin:10px auto 0px auto;
-	cursor:pointer;
-	display:none;
-}
-
 #reload
 {
 	width:14px;
