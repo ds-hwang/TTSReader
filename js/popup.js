@@ -159,8 +159,6 @@ function drawVolume(volume)
 	var canvas_size = [canvas.width, canvas.height];
 	var center = [canvas_size[0]/2, canvas_size[1]/2];
 
-
-
 	context.arc // draw volume
 	(
 		center[0],
@@ -171,13 +169,12 @@ function drawVolume(volume)
 		false
     );
 
+	var rad = context.createRadialGradient(center[0], center[1], radius - 5, center[0], center[1], radius + 5);
+	rad.addColorStop(0, 'rgb(51, 38, 235)');
+	rad.addColorStop(1, 'rgb(5, 0, 71)');
 
-    var rad = context.createRadialGradient(center[0], center[1], 50, center[0], center[1], 50);
-    rad.addColorStop(0, '#CC7200');
-    rad.addColorStop(1, '#FFAF22');
-
-	context.lineWidth   = 8;
-	context.strokeStyle = '#FF8F00';
+	context.lineWidth = 10;
+	context.strokeStyle = rad;
 	context.stroke();
 }
 
