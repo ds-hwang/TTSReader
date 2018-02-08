@@ -1,0 +1,66 @@
+
+/*
+
+	Just the page style, if you're looking for the player, see zen.css
+
+*/
+
+
+/* globals */
+
+body {
+	margin: 0px
+	text-align: center;
+	padding:5px;
+}
+
+
+
+/* player */
+
+#zen {
+	margin:0px;
+}
+
+#error
+{
+	display:none;
+	cursor:pointer;
+	margin:5px 0px 5px 0px;
+}
+
+#logo
+{
+	width:150px;
+	height:37px;
+	background: url(../images/donate-button-small.png) no-repeat;
+	margin:10px auto 0px auto;
+	cursor:pointer;
+	display:none;
+}
+
+#reload
+{
+	width:14px;
+	height:14px;
+	position: absolute;
+	top:14px;
+	left:16px;
+	background: #5D5D5D;
+	z-index: 999;
+	cursor:pointer;
+	border-radius: 2px;
+	box-shadow: 0px 1px 0px rgba(0,0,0,.1);
+}
+#reload_back
+{
+	top:0px;
+	left:0px;
+	width:50px;
+	height:50px;
+	z-index: -999;
+	position: absolute;
+	background: #EDEDED;
+	border-radius: 40px;
+	opacity: 1;
+}

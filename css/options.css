@@ -1,0 +1,331 @@
+/*
+ * Options CSS markup
+ *
+ * Costume extension options page inspired by Chrome settings UI
+ *
+ * This code is free to use and abuse under the MIT license
+ *
+ * @package		TTS Reader v.0.2.5
+ * @author		Tracjhe Petrov a.k.a SkechBoy
+ * @link 		https://github.com/skechboy/TTS Reader/blob/master/css/options.css
+*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+						  					   MAIN MARKUP's
+----------------------------------------------------------------------------------------------------------------------*/
+* { box-sizing: border-box; }
+body,html
+{
+	height:100%;
+	min-height: 100%;
+}
+
+body
+{
+	font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+h1
+{
+		line-height:1;
+		display:block;
+		cursor:default;
+		color: #5C6166;
+		font-size: 1.5em;
+		font-weight: normal;
+		-webkit-user-select: none;
+	}
+/*----------------------------------------------------------------------------------------------------------------------
+						  						NAVIGATION
+----------------------------------------------------------------------------------------------------------------------*/
+#navigation
+{
+	width:155px;
+	height:100%;
+	z-index:2;
+	position: fixed;
+}
+	#navigation #product-name
+	{
+		padding: 21px 0px 0px 23px;
+	}
+	#navigation #nav
+	{
+
+	}
+		#navigation #nav ul
+		{
+			list-style-type: none;
+			margin:18px 0px 0px 0px;
+		}
+			#navigation #nav ul li
+			{
+				padding:8px 0px 8px 18px;
+				border-left:6px solid transparent;
+			}
+				#navigation #nav ul .selected
+				{
+					color:#464E5A;
+					padding:0px 0px 7px 30px;
+					border-left:6px solid #464E5A;
+				}
+				#navigation #nav ul li a
+				{
+					border: 0;
+					margin: 0;
+					padding: 0;
+					color: #999;
+					cursor: pointer;
+					text-decoration:none;
+					font: 12px 'DejaVu Sans', Arial, sans-serif;
+					line-height: 17px;
+				}
+/*----------------------------------------------------------------------------------------------------------------------
+						  					CONTENT AND PAGE HEADER
+----------------------------------------------------------------------------------------------------------------------*/
+#content-holder
+{
+	width:100%;
+	height:100%;
+	padding:0px 0px 0px 145px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+	#content-holder #page-header
+	{
+		z-index:3;
+		height:53px;
+		position:fixed;
+		min-width:718px;
+		max-width:718px;
+		background-image: -webkit-linear-gradient(white, white 40%, rgba(255, 255, 255, 0.9));
+		padding:21px 0px 0px 0px;
+		border-bottom: 1px solid #EEE;
+	}
+		#content-holder #page-header #app_logo
+		{
+			width:111px;
+			height:37px;
+			float:right;
+			cursor:pointer;
+			position: relative;
+			margin:-30px 0px 0px 0px;
+			-webkit-filter: grayscale(1);
+			background:url('../images/icon-half.png') no-repeat;
+		}
+			#content-holder #page-header:hover #app_logo
+			{
+				-webkit-filter: grayscale(0);
+			}
+	#options
+	{
+		min-width:718px;
+		max-width:718px;
+		padding:53px 0px 0px 0px;
+		color: #303942;
+	}
+/*----------------------------------------------------------------------------------------------------------------------
+						  			EXTEND CUSTOM INPUT ELEMENT CLASSES
+----------------------------------------------------------------------------------------------------------------------*/
+.fieldset
+{
+	width:inherit;
+	margin:20px 0px 0px 0px;
+	padding:0px 0px 0px 30px;
+	border-left:2px solid transparent;
+	-webkit-transition: border 0.2s linear;
+}
+	.fieldset:hover
+	{
+		border-color:#464E5A;
+	}
+	.fieldset .title
+	{
+		margin:0px 0px 0px -20px;
+color: black;
+font-size: 1.2em;
+margin-bottom: 0.5em;
+-webkit-user-select: none;
+font-weight: normal;
+line-height: 1;
+	}
+
+input[type='range'] {
+    -webkit-appearance: none;
+    background-color: gray;
+    height:3px;
+	border-radius:10px;
+	display:inline-block;
+	vertical-align:middle;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -webkit-user-select: none;
+  background-image: -webkit-linear-gradient(#ededed, #ededed 38%, #dedede);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08),
+      inset 0 1px 2px rgba(255, 255, 255, 0.75);
+  color: #444;
+  font: inherit;
+  text-shadow: 0 1px 0 rgb(240, 240, 240);
+  border-radius: 100%;
+  height: 15px;
+  position: relative;
+  vertical-align: middle;
+  width: 15px;
+   cursor:pointer;
+}
+input[type='range']::-webkit-slider-thumb::before {
+  background-color: #666;
+  border-radius: 100%;
+  bottom: 25%;
+  content: '';
+  display: block;
+  left: 25%;
+  position: absolute;
+  right: 25%;
+  top: 25%;
+}
+
+.range
+{
+  margin: 0.65em 0;
+}
+	.range label
+	{
+		color:#444;
+	}
+		.range label > span
+		{
+			text-align: left;
+			display:inline-block;
+			vertical-align:middle;
+		}
+		.range label:hover
+		{
+			color: black;
+		}
+		.range label > input[type=range]:disabled ~ span
+		{
+			color: #999;
+		}
+
+/*----------------------------------------------------------------------------------------------------------------------
+						  					CUSTOM SCROLLBAR
+----------------------------------------------------------------------------------------------------------------------*/
+.custom-scroll-bar::-webkit-scrollbar
+{
+	width: 10px;
+	overflow: visible;
+	background:none;
+}
+	.custom-scroll-bar::-webkit-scrollbar
+	{
+		background-color: rgba(0, 0, 0, 0.1);
+	}
+	.custom-scroll-bar::-webkit-scrollbar-thumb
+	{
+		background-color: rgba(0, 0, 0, 0.2);
+		-webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.10),inset 0 -1px 0 rgba(0, 0, 0, 0.07);
+	}
+		.custom-scroll-bar::-webkit-scrollbar-thumb:hover
+		{
+			background-color: rgba(0, 0, 0, 0.3);
+			-webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.10),inset 0 -1px 0 rgba(0, 0, 0, 0.07);
+		}
+	.custom-scroll-bar::-webkit-scrollbar-button
+	{
+		height: 0;
+		display: block;
+		background-color: transparent;
+	}
+/*----------------------------------------------------------------------------------------------------------------------
+						  					APPLICATION SPECIFFIC CLASSES
+----------------------------------------------------------------------------------------------------------------------*/
+#contx_info
+{
+	font-size:11px;
+	padding:0px 0px 0px 20px;
+	margin:-10px 0px 0px 0px;
+	color:#F00;
+	display:none;
+}
+#lang_voices
+{
+	cursor:pointer;
+}
+#test
+{
+	display:inline-block;
+	background: url(../small_icon.png) no-repeat;
+	cursor:pointer;
+	width:25px;
+	height:20px;
+	margin:10px 0px -7px 0px;
+	-webkit-transform: rotate(180deg);
+}
+#testtext
+{
+	width:450px;
+}
+.range label span:first-child, .select label span:first-child, .input label span:first-child
+{
+	min-width: 120px;
+	display:inline-block;
+}
+.fieldset a
+{
+	text-decoration: none;
+
+}
+.fieldset img
+{
+	vertical-align:middle;
+	margin:0px 3px 0px 3px;
+	border-radius:5px;
+	overflow: hidden;
+}
+#bugs
+{
+	position: absolute;
+	bottom: 2px;
+	right: 20px;
+}
+	#bugs img
+	{
+		vertical-align: middle;
+	}
+	#bugs a
+	{
+		text-decoration: none;
+		color:#303942;
+	}
+
+#paypalinfo
+{
+	margin:10px 0px 0px 0px;
+	font-size:120%;
+}
+#donations
+{
+	padding:10px;
+}
+	#donations > div
+	{
+		width:151px;
+		height:30px;
+		cursor:pointer;
+		display:inline-block;
+	}
+	#donations #paypal_coffee
+	{
+		background:url('/images/donate-button-small.png');
+	}
+	#donations #paypal_new_version
+	{
+		background:url('/images/version-button.png');
+	}
+	#donations #paypal_supporter
+	{
+		background:url('/images/supporter-button.png');
+	}
