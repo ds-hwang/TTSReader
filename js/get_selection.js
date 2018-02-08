@@ -5,8 +5,8 @@
  *
  * @package		TTS Reader
  * @category	GUI
- * @author		Trajche Petrov a.k.a SkechBoy
- * @link		https://github.com/skechboy/TTS Reader
+ * @author		SkechBoy, Dongseong Hwang
+ * @link		https://github.com/ds-hwang/TTSReader
 
  * -----------------------------------------------------------------------------
  *  Get selected text don't work on iframes and some ssl encrypted pages

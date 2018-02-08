@@ -5,8 +5,8 @@
  *
  * @package		TTS Reader
  * @category	Options
- * @author		Trajche Petrov a.k.a SkechBoy
- * @link		https://github.com/skechboy/TTS Reader
+ * @author		SkechBoy, Dongseong Hwang
+ * @link		https://github.com/ds-hwang/TTSReader
  */
 	var element = {},
 		bg = chrome.extension.getBackgroundPage(),
