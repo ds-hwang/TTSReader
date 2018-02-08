@@ -70,11 +70,6 @@ function init_listeners()
 		save_options();
 	});
 
-	element.app_logo.addEventListener('click', function()
-	{
-		chrome.tabs.create({url: 'http://www.ispeech.org/webapps/speakit'});
-	});
-
 	element.pitch.addEventListener('change', function()
 	{
 		save_options();
@@ -235,20 +230,18 @@ function voice_options(voice)
 {
 	document.getElementById("moreoptions").style.display = 'none';
 	document.getElementById("ispeech").style.display = 'none';
+	element.testtext.value = chrome.i18n.getMessage('lang_testtext');
 
 	switch(voice)
 	{
 		case 'TTS Reader':
-			element.testtext.value = chrome.i18n.getMessage('lang_testtext');
   		break;
 		case 'iSpeech':
 			get_ivoices();
 			document.getElementById("ispeech").style.display = 'block';
-			element.testtext.value = "This is a test text for Google Chrome extension called TTS Reader";
 		break;
 		default:
 			document.getElementById("moreoptions").style.display = 'block';
-			element.testtext.value = "This is a test text for Google Chrome extension called TTS Reader";
 	}
 }
 
