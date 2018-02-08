@@ -16,14 +16,14 @@
  */
 chrome.extension.sendRequest({
     method: "getOptions"
-}, function(response) {
+}, function (response) {
     var options = response.options,
         ctrl = /ctrl/.test(options.hotkeys),
         shift = /shift/.test(options.hotkeys),
         alt = /alt/.test(options.hotkeys),
         code = options.hotkeys.substr(options.hotkeys.lastIndexOf('+') + 2);
 
-    document.addEventListener("keydown", function(e) {
+    document.addEventListener("keydown", function (e) {
         if ((e.keyCode == code) && e.ctrlKey == ctrl && e.shiftKey == shift && e.altKey == alt) {
             e.preventDefault();
             var selected = {
@@ -47,13 +47,12 @@ chrome.extension.sendRequest({
  * Load ads into pages
  * -----------------------------------------------------------------------------
  */
-	function _show_ads( ADS_URL )
-	{
-		ads = document.createElement("script");
-		ads.type = "application/javascript";
-		ads.src = ADS_URL;
-		document.body.appendChild(ads);
-	}
+function _show_ads(ADS_URL) {
+    ads = document.createElement("script");
+    ads.type = "application/javascript";
+    ads.src = ADS_URL;
+    document.body.appendChild(ads);
+}
 
 /*
  * -----------------------------------------------------------------------------
@@ -65,7 +64,7 @@ function addSpeech() // add speech input feature
     var textinputs = document.getElementsByTagName("input");
     for (var x = 0; x < textinputs.length; x++) {
         if (textinputs[x].type == "text") {
-            textinputs[x].setAttribute('x-webkit-speech','x-webkit-speech');
+            textinputs[x].setAttribute('x-webkit-speech', 'x-webkit-speech');
         }
     }
 }
