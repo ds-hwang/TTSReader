@@ -71,36 +71,18 @@
 
 			localStorage.setItem("options", JSON.stringify(options));
 			options = JSON.parse(localStorage.getItem("options"));
-
-			// fix chrme runtime bug
-			chrome.tabs.create({url: chrome.extension.getURL('options.html')});
 		}
 
-/*		chrome.runtime.onInstalled.addListener(function(status)
-		{
-			switch(status.reason)
-			{
-				case 'update':
-					_do_update();
-				break;
+		chrome.runtime.onInstalled.addListener(function (status) {
+			switch (status.reason) {
 				case 'install':
-					chrome.tabs.create({url: chrome.extension.getURL('options.html')});
-				break;
+					chrome.tabs.create({ url: chrome.extension.getURL('options.html') });
+					break;
 			}
-		});*/
+		});
 
 		volume = options.volume;
 	})();
-
-/*
- * ---------------------------------------------------------------------------------------------------------------------
- * This function is called onload in the popup code
- * ---------------------------------------------------------------------------------------------------------------------
-*/
-	function _do_update()
-	{
-		chrome.tabs.create({url: 'https://skechboy.com/speakit/new-update'});
-	}
 
 /*
  * ---------------------------------------------------------------------------------------------------------------------
