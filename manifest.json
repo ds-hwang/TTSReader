@@ -26,7 +26,6 @@
         "128": "images/ttsreader_bigicon.png",
         "16": "images/ttsreader_smallicon.png"
     },
-    "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDABrGGT8K54o9aUtrqROVRW4IIw1TYylqwqD8X4FWFdWNFNLvbjhemOZkO4DyaaBOnv4zv/1rg8Ix5k/RLdfuAyye0JJi2mLHckUvC3dUscfwCx9ap+iARLAZvu/RhoRm5okk7PvSHTBmGvyBNvDlObapH2+GBk/rsXkejU0H5twIDAQAB",
     "manifest_version": 2,
     "minimum_chrome_version": "14",
     "name": "TTS Reader",
