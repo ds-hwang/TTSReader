@@ -52,16 +52,6 @@
                 ],
                 "gender": "female",
                 "lang": "en-US",
-                "voice_name": "iSpeech"
-            },
-            {
-                "event_types": [
-                    "start",
-                    "marker",
-                    "end"
-                ],
-                "gender": "female",
-                "lang": "en-US",
                 "voice_name": "TTS Reader"
             }
         ]

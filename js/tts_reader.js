@@ -24,9 +24,7 @@ current = 0,
 	reloaded = [],
 	datastack = [],
 	textstack = '',
-	ispeech_api_key = '59e482ac28dd52db23a22aff4ac1d31e',
 	google_tts = 'http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&client=speakit&prev=input&tl=',
-	ispeech_tts = 'http://api.ispeech.org/api/rest?format=mp3&action=convert&apikey=',
 	options = JSON.parse(localStorage.getItem("options"));
 /*
  * ---------------------------------------------------------------------------------------------------------------------
@@ -46,17 +44,15 @@ function getVersion() {
 (function () {
 	if (options == null || options.version === undefined) // notify users for version update
 	{
-		voice = (options != null && options.voice !== undefined) ? options.voice : 'iSpeech';
+		voice = (options != null && options.voice !== undefined) ? options.voice : 'TTS Reader';
 
 		vupdate = (options == null ? "installed" : "updated");
 
 		options =
 			{
 				voice: voice,
-				ivoice: "usenglishfemale",
 				version: getVersion(),
 				volume: 0.5,
-				irate: 0,
 				rate: 1.0,
 				pitch: 1.0,
 				enqueue: false,
@@ -139,8 +135,9 @@ function preloadAudio(channel, data) {
 function pauseAudio() // Pause Audio
 {
 	state = 'paused';
-	if (options.voice == 'TTS Reader' || options.voice == 'iSpeech') {
-		audio[current].pause(); // pause current audio channel
+	if (options.voice == 'TTS Reader') {
+		if (audio[current])
+			audio[current].pause(); // pause current audio channel
 		if (debug) console.log('Audio channel: ' + current + ' was paused.');
 	}
 }
@@ -148,7 +145,7 @@ function pauseAudio() // Pause Audio
 function resumeAudio() // resume paused audio
 {
 	options = JSON.parse(localStorage.getItem("options")); //must fix!
-	if (options.voice == 'TTS Reader' || options.voice == 'iSpeech') {
+	if (options.voice == 'TTS Reader') {
 		if (audio[current] !== undefined) // stupid bug but i'll fix that :)
 		{
 			state = 'playing';
@@ -171,7 +168,7 @@ function resumeAudio() // resume paused audio
 function replayAudio() // replay audio
 {
 	options = JSON.parse(localStorage.getItem("options")); //must fix
-	if (options.voice == 'TTS Reader' || options.voice == 'iSpeech') {
+	if (options.voice == 'TTS Reader') {
 		ttsRead(filterText(textstack));
 	}
 	else {
@@ -268,7 +265,7 @@ function contextMenu(selection) {
 	options = JSON.parse(localStorage.getItem("options")); //must fix
 	if (state != 'playing') {
 		if (state == 'ready') {
-			if (options.voice == 'TTS Reader' || options.voice == 'iSpeech') {
+			if (options.voice == 'TTS Reader') {
 				ttsRead(filterText(selection.selectionText.toString()));
 			}
 			else {
@@ -312,7 +309,7 @@ chrome.extension.onRequest.addListener(function (request, sender, sendResponse) 
 				}
 			}
 			else {
-				if (options.voice == 'TTS Reader' || options.voice == 'iSpeech') {
+				if (options.voice == 'TTS Reader') {
 					if (state == 'paused') {
 						resumeAudio();
 					}
@@ -360,12 +357,6 @@ function ttsRead(text) {
 		}
 
 		url = google_tts + lang + '&q='; // assemble full url for Google Network TTS API
-		if (options.voice == 'iSpeech') // iSpeech TTS API
-		{
-			if (options.ivoice == '') { options.ivoice = 'usenglishfemale'; }
-			url = ispeech_tts + ispeech_api_key + '&speed=' + options.irate + '&voice=' + options.ivoice + '&text=';
-		}
-
 		words = text.length;
 
 		audio = new Array();

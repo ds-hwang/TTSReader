@@ -11,9 +11,9 @@
 var element = {},
 	bg = chrome.extension.getBackgroundPage(),
 	vars = [
-		'rate', 'test', 'rateps', 'irateps', 'pitch', 'voice', 'ivoice', 'volume', 'context', 'speechinput',
-		'words', 'iwords', 'lang_voices', 'hotkeys', 'enqueue', 'percents', 'testtext', 'language', 'hotkey',
-		'lang_voices', 'irate', 'options_title', 'app_logo'
+		'rate', 'test', 'rateps', 'pitch', 'voice', 'volume', 'context', 'speechinput',
+		'words', 'lang_voices', 'hotkeys', 'enqueue', 'percents', 'testtext', 'language', 'hotkey',
+		'lang_voices', 'options_title', 'app_logo'
 	];
 /*
  * ---------------------------------------------------------------------------------------------------------------------
@@ -76,10 +76,6 @@ function init_listeners() {
 		save_options();
 	});
 
-	element.ivoice.addEventListener('change', function () {
-		save_options();
-	});
-
 	element.lang_voices.addEventListener('click', function () {
 		// redirect's to Chrome Webstore for new TTS engines
 		chrome.tabs.create({ url: 'http://goo.gl/dU9tB' });
@@ -97,13 +93,6 @@ function init_listeners() {
 	{
 		element.rateps.innerHTML = 'x' + (parseFloat(this.value)).toFixed(2);
 		element.words.innerHTML = Math.round(this.value * 200);
-		save_options();
-	}, false);
-
-	element.irate.addEventListener('change', function () // display irate
-	{
-		element.irateps.innerHTML = 'x' + parseFloat(this.value);
-		element.iwords.innerHTML = (parseInt(this.value) + 11) * 30;
 		save_options();
 	}, false);
 }
@@ -163,9 +152,7 @@ function save_options() {
 		{
 			version: getVersion(),
 			rate: element.rate.value,
-			irate: element.irate.value,
 			voice: element.voice.value,
-			ivoice: element.ivoice.value,
 			pitch: element.pitch.value,
 			enqueue: element.enqueue.checked,
 			speechinput: element.speechinput.checked,
@@ -192,14 +179,11 @@ function restore_options() {
 	element.hotkeys.value = getHotkeys(options.hotkeys);
 	element.hotkey = options.hotkeys;
 	element.rate.value = options.rate;
-	element.irate.value = options.irate;
 	element.pitch.value = options.pitch;
 	element.volume.value = parseInt(options.volume * 100);
 	element.percents.innerHTML = volume.value + ' %';
 	element.rateps.innerHTML = 'x' + rate.value
-	element.irateps.innerHTML = 'x' + irate.value
 	element.words.innerHTML = (200 * rate.value).toFixed(0);
-	element.iwords.innerHTML = 30 * (parseInt(irate.value) + 11);
 }
 
 /*
@@ -209,15 +193,10 @@ function restore_options() {
 */
 function voice_options(voice) {
 	document.getElementById("moreoptions").style.display = 'none';
-	document.getElementById("ispeech").style.display = 'none';
 	element.testtext.value = chrome.i18n.getMessage('lang_testtext');
 
 	switch (voice) {
 		case 'TTS Reader':
-			break;
-		case 'iSpeech':
-			get_ivoices();
-			document.getElementById("ispeech").style.display = 'block';
 			break;
 		default:
 			document.getElementById("moreoptions").style.display = 'block';
@@ -336,28 +315,6 @@ function getVoices() {
 
 		voice_options(options.voice);
 	});
-}
-
-function get_ivoices() {
-	var request = new XMLHttpRequest();
-	request.open("GET", "http://www.ispeech.org/key?key=59e482ac28dd52db23a22aff4ac1d31e&voices&output=json&labels", true);
-	request.onreadystatechange = function () {
-		if (request.readyState == 4) {
-			// innerText does not let the attacker inject HTML elements.
-			voicesContent = JSON.parse(request.responseText, function (key, value) {
-				if (key != '' && key != 'eurdutchmale') {
-					var option = document.createElement("option");
-					option.value = key;
-					option.text = value;
-					if (key == options.ivoice) {
-						option.setAttribute('selected', '');
-					}
-					element.ivoice.appendChild(option);
-				}
-			});
-		}
-	}
-	request.send();
 }
 
 /*
