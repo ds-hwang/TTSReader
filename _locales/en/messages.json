@@ -14,9 +14,6 @@
     "lang_engine": {
         "message": "Text to Speech engine"
     },
-    "lang_enqueue": {
-        "message": "Enable enqueue mode"
-    },
     "lang_error": {
         "message": "Can't hear anything? Click here!"
     },

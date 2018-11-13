@@ -10,8 +10,8 @@
  */
 var element = {}, bg = chrome.extension.getBackgroundPage(), vars = [
   'rate', 'test', 'rateps', 'pitch', 'voice', 'volume', 'context',
-  'speechinput', 'words', 'lang_voices', 'hotkeys', 'enqueue', 'percents',
-  'testtext', 'language', 'hotkey', 'lang_voices', 'options_title', 'app_logo'
+  'speechinput', 'words', 'lang_voices', 'hotkeys', 'percents', 'testtext',
+  'language', 'hotkey', 'lang_voices', 'options_title', 'app_logo'
 ];
 /*
  * ---------------------------------------------------------------------------------------------------------------------
@@ -47,7 +47,6 @@ function init_listeners() {
         set_vars(vars);
         chrome.tts.speak(document.getElementById("testtext").value, {
           voiceName : element.voice.value,
-          enqueue : Boolean(element.enqueue.checked),
           rate : parseFloat(element.rate.value),
           pitch : parseFloat(element.pitch.value),
           volume : parseFloat(element.volume.value / 100)
@@ -60,8 +59,6 @@ function init_listeners() {
   });
 
   element.pitch.addEventListener('change', function() { save_options(); });
-
-  element.enqueue.addEventListener('change', function() { save_options(); });
 
   element.speechinput.addEventListener('change',
                                        function() { save_options(); });
@@ -154,7 +151,6 @@ function save_options() {
     rate : element.rate.value,
     voice : element.voice.value,
     pitch : element.pitch.value,
-    enqueue : element.enqueue.checked,
     speechinput : element.speechinput.checked,
     context : element.context.checked,
     hotkeys : element.hotkey,
@@ -176,7 +172,6 @@ function restore_options() {
       'TTS Reader' + _is_update() + ' v' + getVersion();
   element.speechinput.checked = options.speechinput;
   element.context.checked = options.context;
-  element.enqueue.checked = options.enqueue;
   element.hotkeys.value = getHotkeys(options.hotkeys);
   element.hotkey = options.hotkeys;
   element.rate.value = options.rate;

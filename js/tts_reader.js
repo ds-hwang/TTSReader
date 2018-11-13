@@ -16,7 +16,7 @@
  */
 var i = 0, words = 0, audio = [], volume = 0;
 current = 0,
-    debug = false,   // make this true if you want to debug TTS Reader
+    debug = true,    // make this true if you want to debug TTS Reader
     state = 'ready', // curent playing state (playing OR paused)
     reloaded = [], datastack = [], textstack = '',
     google_tts =
@@ -41,8 +41,9 @@ function getVersion() {
 if (options == null ||
     options.version === undefined) // notify users for version update
 {
-  voice = (options != null && options.voice !== undefined) ? options.voice
-                                                           : 'Google US English';
+  voice = (options != null && options.voice !== undefined)
+              ? options.voice
+              : 'Google US English';
 
   vupdate = (options == null ? "installed" : "updated");
 
@@ -52,7 +53,6 @@ if (options == null ||
     volume : 0.5,
     rate : 1.0,
     pitch : 1.0,
-    enqueue : false,
     context : true,
     logo : true,
     speechinput : false,
@@ -136,6 +136,8 @@ function pauseAudio() // Pause Audio
       audio[current].pause(); // pause current audio channel
     if (debug)
       console.log('Audio channel: ' + current + ' was paused.');
+  } else {
+    chrome.tts.pause();
   }
 }
 
@@ -151,13 +153,8 @@ function resumeAudio() // resume paused audio
         console.log('Audio channel: ' + current + ' was resumed.');
     }
   } else {
-    chrome.tts.isSpeaking(function(tts_state) {
-      if (tts_state) {
-        chrome.tts.stop();
-      } else {
-        TTS_Speak(textstack, false);
-      }
-    });
+    state = 'playing';
+    chrome.tts.resume();
   }
 }
 
@@ -315,9 +312,13 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
             }
           }
         } else {
-          if (text.length && text[0] != '') {
-            state = 'playing';
-            TTS_Speak(request.text, true);
+          if (state == 'paused') {
+            resumeAudio();
+          } else {
+            if (text.length && text[0] != '') {
+              state = 'playing';
+              TTS_Speak(request.text, true);
+            }
           }
         }
       }
@@ -408,20 +409,33 @@ function TTS_Speak(utterance, rp_state) {
     nowPlaying();
   }
 
-  state = 'playing';
-  chrome.tts.speak(utterance, {
+  tts_options = {
     voiceName : options.voice,
-    enqueue : Boolean(options.enqueue),
+    enqueue : Boolean(false),
     rate : parseFloat(options.rate),
     pitch : parseFloat(options.pitch),
     volume : parseFloat(options.volume),
-
-    onEvent : function(event) {
-      if (debug)
-        console.log('Event ' + event.type + ' at position ' + event.charIndex);
-      if (event.type == 'end') {
-        showReplay();
-      }
+  };
+  tts_options.onEvent = function(event) {
+    if (false) {
+      text.setSelectionRange(0, event.charIndex);
+    }
+    if (debug)
+      console.log('Event ' + event.type + ' at position ' + event.charIndex);
+    if (event.type == 'end' || event.type == 'interrupted' ||
+        event.type == 'cancelled' || event.type == 'error') {
+      chrome.tts.isSpeaking(function(isSpeaking) {
+        if (!isSpeaking) {
+          state = 'ready';
+        }
+      });
+    }
+  };
+  state = 'playing';
+  chrome.tts.stop();
+  chrome.tts.speak(utterance, tts_options, function() {
+    if (chrome.runtime.lastError) {
+      console.log('TTS Error: ' + chrome.runtime.lastError.message);
     }
   });
 }
@@ -501,13 +515,21 @@ function filterText(text) {
  * ---------------------------------------------------------------------------------------------------------------------
  */
 var speakListener = function(utterance, options, sendTtsEvent) {
+  console.log("speakListener");
   // sendTtsEvent({'event_type': 'start', 'charIndex': 0})
   nowPlaying();
-  ttsRead(filterText(utterance));
+  if (options.voice == 'TTS Reader') {
+    ttsRead(filterText(textstack));
+  } else {
+    TTS_Speak(textstack, false);
+  }
   // sendTtsEvent({'event_type': 'end', 'charIndex': utterance.length})
 };
 
-var stopListener = function() { pauseAudio(); };
+var stopListener = function() {
+  console.log("stopListener");
+  pauseAudio();
+};
 
 function log(error) {
   if (debug)
