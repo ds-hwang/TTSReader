@@ -42,7 +42,7 @@ if (options == null ||
     options.version === undefined) // notify users for version update
 {
   voice = (options != null && options.voice !== undefined) ? options.voice
-                                                           : 'TTS Reader';
+                                                           : 'Google US English';
 
   vupdate = (options == null ? "installed" : "updated");
 
