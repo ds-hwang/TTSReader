@@ -14,14 +14,15 @@
  * Defining main background variables
  * ---------------------------------------------------------------------------------------------------------------------
  */
-var i = 0, words = 0, audio = [], volume = 0;
-current = 0,
-    debug = true,    // make this true if you want to debug TTS Reader
-    state = 'ready', // curent playing state (playing OR paused)
-    reloaded = [], datastack = [], textstack = '',
-    google_tts =
-        'http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&client=speakit&prev=input&tl=',
-    options = JSON.parse(localStorage.getItem("options"));
+var i = 0, words = 0, audio = [];
+var current = 0;
+var debug = true;    // make this true if you want to debug TTS Reader
+var state = 'ready'; // curent playing state (playing OR paused)
+var reloaded = [], datastack = [], textstack = '';
+var google_tts =
+    'http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&client=speakit&prev=input&tl=';
+var google_tts_name = "Google TTS";
+var options = JSON.parse(localStorage.getItem("options"));
 /*
  * ---------------------------------------------------------------------------------------------------------------------
  * Get current version
@@ -71,8 +72,6 @@ chrome.runtime.onInstalled.addListener(function(status) {
     break;
   }
 });
-
-volume = options.volume;
 })();
 
 /*
@@ -98,7 +97,9 @@ function playAudio(channel, data, first, firstdata) {
     audio[channel].src = firstdata;
   }
   audio[channel].play();
-  setVolume(volume);
+
+  options = JSON.parse(localStorage.getItem("options"));
+  setAudioOptions(options);
   preloadAudio(nextchannel, data);
   words--;
   updateNumber(words);
@@ -131,7 +132,7 @@ function preloadAudio(channel, data) {
 function pauseAudio() // Pause Audio
 {
   state = 'paused';
-  if (options.voice == 'TTS Reader') {
+  if (options.voice == google_tts_name) {
     if (audio[current])
       audio[current].pause(); // pause current audio channel
     if (debug)
@@ -144,7 +145,7 @@ function pauseAudio() // Pause Audio
 function resumeAudio() // resume paused audio
 {
   options = JSON.parse(localStorage.getItem("options")); // must fix!
-  if (options.voice == 'TTS Reader') {
+  if (options.voice == google_tts_name) {
     if (audio[current] !== undefined) // stupid bug but i'll fix that :)
     {
       state = 'playing';
@@ -161,22 +162,25 @@ function resumeAudio() // resume paused audio
 function replayAudio() // replay audio
 {
   options = JSON.parse(localStorage.getItem("options")); // must fix
-  if (options.voice == 'TTS Reader') {
+  if (options.voice == google_tts_name) {
     ttsRead(filterText(textstack));
   } else {
     TTS_Speak(textstack, false);
   }
 }
 
-function setVolume(value) // set volume
+function setAudioOptions(options) // set volume
 {
-  if (audio[0] !== undefined) {
-    audio[0].volume = parseFloat(value); // Set volume on bouth channels
-    audio[1].volume = parseFloat(value);
-    volume = parseFloat(value);
-  }
   if (debug)
-    console.log('Volume is set to' + parseFloat(value) + '%');
+    console.log('Audio sets volume to' + parseFloat(options.volume) +
+                ' and rate to' + parseFloat(options.rate) + '%');
+  if (audio[0] !== undefined) {
+    audio[0].volume =
+        parseFloat(options.volume); // Set volume on bouth channels
+    audio[1].volume = parseFloat(options.volume);
+    audio[0].playbackRate = parseFloat(options.rate);
+    audio[1].playbackRate = parseFloat(options.rate);
+  }
 }
 
 function showReplay() // shows replay button in popup.html
@@ -258,7 +262,7 @@ function contextMenu(selection) {
   options = JSON.parse(localStorage.getItem("options")); // must fix
   if (state != 'playing') {
     if (state == 'ready') {
-      if (options.voice == 'TTS Reader') {
+      if (options.voice == google_tts_name) {
         ttsRead(filterText(selection.selectionText.toString()));
       } else {
         TTS_Speak(selection.selectionText.toString(), true);
@@ -280,7 +284,7 @@ function contextMenu(selection) {
 if (options.context) {
   chrome.contextMenus.removeAll();
   chrome.contextMenus.create({
-    "title" : "TTS Reader",
+    "title" : google_tts_name,
     "contexts" : [ "selection" ],
     "onclick" : contextMenu
   });
@@ -302,21 +306,14 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
           pauseAudio();
         }
       } else {
-        if (options.voice == 'TTS Reader') {
-          if (state == 'paused') {
-            resumeAudio();
-          } else {
-            if (text.length && text[0] != '') {
+        if (state == 'paused') {
+          resumeAudio();
+        } else {
+          if (text.length && text[0] != '') {
+            if (options.voice == google_tts_name) {
               nowPlaying();
               ttsRead(text);
-            }
-          }
-        } else {
-          if (state == 'paused') {
-            resumeAudio();
-          } else {
-            if (text.length && text[0] != '') {
-              state = 'playing';
+            } else {
               TTS_Speak(request.text, true);
             }
           }
@@ -515,20 +512,16 @@ function filterText(text) {
  * ---------------------------------------------------------------------------------------------------------------------
  */
 var speakListener = function(utterance, options, sendTtsEvent) {
-  console.log("speakListener");
+  if (debug)
+    console.log("speakListener");
   // sendTtsEvent({'event_type': 'start', 'charIndex': 0})
   nowPlaying();
-  if (options.voice == 'TTS Reader') {
-    ttsRead(filterText(textstack));
-  } else {
-    TTS_Speak(textstack, false);
-  }
   // sendTtsEvent({'event_type': 'end', 'charIndex': utterance.length})
 };
 
 var stopListener = function() {
-  console.log("stopListener");
-  pauseAudio();
+  if (debug)
+    console.log("stopListener");
 };
 
 function log(error) {

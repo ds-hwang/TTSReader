@@ -8,6 +8,8 @@
  * @author		SkechBoy, Dongseong Hwang
  * @link		https://github.com/ds-hwang/TTSReader
  */
+
+var google_tts_name = "Google TTS";
 var element = {}, bg = chrome.extension.getBackgroundPage(), vars = [
   'rate', 'test', 'rateps', 'pitch', 'voice', 'volume', 'context',
   'speechinput', 'words', 'lang_voices', 'hotkeys', 'percents', 'testtext',
@@ -155,10 +157,10 @@ function save_options() {
     context : element.context.checked,
     hotkeys : element.hotkey,
     volume : parseFloat(element.volume.value / 100)
-  }
+  };
 
-                localStorage.setItem("options", JSON.stringify(options));
-  bg.setVolume(parseFloat(element.volume.value / 100));
+  localStorage.setItem("options", JSON.stringify(options));
+  bg.setAudioOptions(options);
 }
 
 /*
@@ -192,7 +194,7 @@ function voice_options(voice) {
   element.testtext.value = chrome.i18n.getMessage('lang_testtext');
 
   switch (voice) {
-  case 'TTS Reader':
+  case google_tts_name:
     break;
   default:
     document.getElementById("moreoptions").style.display = 'block';
