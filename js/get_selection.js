@@ -15,17 +15,18 @@
  *  browser ever build :)
  * -----------------------------------------------------------------------------
 */
-(function () {
-    doc = document.location.href;
-    selection = window.getSelection();
+(function() {
+doc = document.location.href;
+selection = window.getSelection();
 
-    if (doc.search(/docs.google.com/i) != -1) // if Google Doc's
-    {
-        selection = document.getElementById('kix-appview');
-        if (selection != null) selection = selection.innerText.split(' ').join(' ').substr(17);
-    }
-    if (selection != null && selection != '') {
-        //console.log(selection);
-        chrome.extension.sendRequest({ "text": selection.toString() });
-    }
+if (doc.search(/docs.google.com/i) != -1) // if Google Doc's
+{
+  selection = document.getElementById('kix-appview');
+  if (selection != null)
+    selection = selection.innerText.split(' ').join(' ').substr(17);
+}
+if (selection != null && selection != '') {
+  // console.log(selection);
+  chrome.extension.sendRequest({"text" : selection.toString()});
+}
 })();

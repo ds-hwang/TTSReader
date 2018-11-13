@@ -1,7 +1,3 @@
-var languages =
-    [
-        {
-            "language": "en",
-            "name": "English"
-        },
-    ];
+var languages = [
+  {"language" : "en", "name" : "English"},
+];
