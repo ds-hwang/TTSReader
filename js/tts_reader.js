@@ -16,7 +16,7 @@
  */
 var i = 0, words = 0, audio = [];
 var current = 0;
-var debug = false;   // make this true if you want to debug TTS Reader
+var debug = false;    // make this true if you want to debug TTS Reader
 var state = 'ready'; // curent playing state (playing OR paused)
 var reloaded = [], datastack = [], textstack = '';
 var google_tts =
@@ -305,7 +305,8 @@ if (options.context) {
  */
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   if (debug)
-    console.log('onRequest');
+    console.log('onRequest request.method:' + request.method +
+                " request.text:" + request.text + " state:" + state);
   options = JSON.parse(localStorage.getItem("options")); // must fix
   if (request.method === undefined) {
     if (request.text != undefined) {
@@ -412,42 +413,58 @@ function TTS_Speak(sentences, rp_state) {
     nowPlaying();
   }
 
-  state = 'playing';
-  chrome.tts.stop();
+  words = sentences.length
   for (i in sentences) {
-    tts_options = {
-      voiceName : options.voice,
-      enqueue : Boolean(false),
-      rate : parseFloat(options.rate),
-      pitch : parseFloat(options.pitch),
-      volume : parseFloat(options.volume),
-    };
-    tts_options.onEvent = function(event) {
+    ttsSpeakInternal(sentences[i], i != 0, i, words);
+  }
+  updateNumber(words);
+  state = 'playing';
+
+  // FIXME: chrome tts has a bug. speak doesn't guarantee to start.
+  setTimeout(function() { chrome.tts.resume(); }, 100);
+}
+
+function ttsSpeakInternal(sentence, enqueue, i, total) {
+  if (debug)
+    console.log('sentence:' + sentence + " enqueue:" + enqueue + " i:" + i +
+                " total:" + total);
+  tts_options = {
+    voiceName : options.voice,
+    enqueue : Boolean(enqueue),
+    rate : parseFloat(options.rate),
+    pitch : parseFloat(options.pitch),
+    volume : parseFloat(options.volume),
+  };
+  tts_options.onEvent = function(event) {
+    if (debug)
+      console.log('Event ' + event.type + ' at position ' + event.charIndex);
+    if (event.type == 'start') {
       if (false) {
         text.setSelectionRange(0, event.charIndex);
       }
-      if (debug)
-        console.log('Event ' + event.type + ' at position ' + event.charIndex);
-      if (event.type == 'end' || event.type == 'interrupted' ||
-          event.type == 'cancelled' || event.type == 'error') {
-        chrome.tts.isSpeaking(function(isSpeaking) {
-          if (!isSpeaking) {
-            state = 'ready';
-          }
-        });
+    } else if (event.type == 'end') {
+      words = total - i - 1
+      updateNumber(words);
+      if (words == 0) {
+        state = 'ready';
+        chrome.tts.stop();
+      } else {
+        // FIXME: chrome tts has a bug. enqueue doesn't guarantee to continue.
+        chrome.tts.resume();
       }
-    };
-    if (i > 0)
-      tts_options.enqueue = Boolean(true);
+    } else if (event.type == 'interrupted' || event.type == 'cancelled' ||
+               event.type == 'error') {
+      state = 'ready';
+      updateNumber(0);
+      chrome.tts.stop();
+    }
+  };
 
-    if (debug)
-      console.log("i:" + i + " " + sentences[i]);
-    chrome.tts.speak(sentences[i], tts_options, function() {
-      if (chrome.runtime.lastError) {
-        console.log('TTS Error: ' + chrome.runtime.lastError.message);
-      }
-    });
-  }
+  chrome.tts.speak(sentence, tts_options, function() {
+    if (chrome.runtime.lastError) {
+      console.log('TTS Error: ' + chrome.runtime.lastError.message);
+    }
+  });
 }
 
 /*
