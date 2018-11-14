@@ -319,7 +319,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         if (state == 'paused') {
           resumeAudio();
         } else {
-          if (request.text.length && request.text[0] != '') {
+          if (request.text.length) {
             if (options.voice == google_tts_name) {
               nowPlaying();
               ttsRead(filterText(request.text, true));
@@ -504,7 +504,7 @@ function beautify(string) {
 function filterText(text, plus_join) {
   var j = 0, str = [], tmpstr = [];
   // Max length of one sentence this is Google's fault :)
-  maxlength = 90;
+  maxlength = 300;
   badchars = [
     "+", "#", "@", "-", "<", ">", "\n", "!", "?", ":", "&", '"', "  ", "。", "`"
   ];
@@ -513,12 +513,17 @@ function filterText(text, plus_join) {
     " ", ".", ""
   ];
 
-  for (var i in badchars) // replacing bad chars
-  {
-    text = text.split(badchars[i]).join(replaces[i]);
+  if (plus_join) {
+    for (var i in badchars) // replacing bad chars
+    {
+      text = text.split(badchars[i]).join(replaces[i]);
+    }
   }
 
-  str = text.split(/([.,!?:])/i); // this is where magic happens :) :)
+  str = text.split(/\.|\?|\!/, maxlength); // this is where magic happens :) :)
+  if (!plus_join) {
+    return str.filter(function(el) { return el.trim().length > 0; });
+  }
 
   for (var i in str) // join and group sentences
   {
@@ -528,21 +533,15 @@ function filterText(text, plus_join) {
     }
 
     if ((tmpstr[j] + str[i]).length < maxlength) {
-      if (plus_join) {
-        tmpstr[j] += beautify(str[i].split(' ').join('+'));
-      } else {
-        tmpstr[j] += beautify(str[i]);
-      }
+      tmpstr[j] += beautify(str[i].split(' ').join('+'));
+
     } else {
       tmpstr[j] = beautify(tmpstr[j]);
 
       if (str[i].length < maxlength) {
         j++;
-        if (plus_join) {
-          tmpstr[j] = beautify(str[i].split(' ').join('+'));
-        } else {
-          tmpstr[j] = beautify(str[i]);
-        }
+        tmpstr[j] = beautify(str[i].split(' ').join('+'));
+
       } else {
         sstr = split(str[i], maxlength, plus_join);
         for (x in sstr) {
