@@ -16,7 +16,7 @@
  */
 var i = 0, words = 0, audio = [];
 var current = 0;
-var debug = false;    // make this true if you want to debug TTS Reader
+var debug = false;   // make this true if you want to debug TTS Reader
 var state = 'ready'; // curent playing state (playing OR paused)
 var reloaded = [], datastack = [], textstack = '';
 var google_tts =
@@ -59,9 +59,9 @@ if (options == null ||
     speechinput : false,
     collect : true,
     hotkeys : "ctrl + shift + 83" // Ctrl+Shift+S default kb shortcut
-  }
+  };
 
-            localStorage.setItem("options", JSON.stringify(options));
+  localStorage.setItem("options", JSON.stringify(options));
   options = JSON.parse(localStorage.getItem("options"));
 }
 

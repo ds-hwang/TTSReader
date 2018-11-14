@@ -53,6 +53,8 @@ function init_listeners() {
           pitch : parseFloat(element.pitch.value),
           volume : parseFloat(element.volume.value / 100)
         });
+        // FIXME: chrome tts has a bug. speak doesn't guarantee to start.
+        setTimeout(function() { chrome.tts.resume(); }, 100);
       });
 
   element.voice.addEventListener('change', function() {
