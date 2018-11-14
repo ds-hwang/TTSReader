@@ -16,7 +16,7 @@
  */
 var i = 0, words = 0, audio = [];
 var current = 0;
-var debug = true;    // make this true if you want to debug TTS Reader
+var debug = false;   // make this true if you want to debug TTS Reader
 var state = 'ready'; // curent playing state (playing OR paused)
 var reloaded = [], datastack = [], textstack = '';
 var google_tts =
@@ -131,6 +131,8 @@ function preloadAudio(channel, data) {
  */
 function pauseAudio() // Pause Audio
 {
+  if (debug)
+    console.log('pauseAudio');
   state = 'paused';
   if (options.voice == google_tts_name) {
     if (audio[current])
@@ -144,6 +146,8 @@ function pauseAudio() // Pause Audio
 
 function resumeAudio() // resume paused audio
 {
+  if (debug)
+    console.log('resumeAudio');
   options = JSON.parse(localStorage.getItem("options")); // must fix!
   if (options.voice == google_tts_name) {
     if (audio[current] !== undefined) // stupid bug but i'll fix that :)
@@ -161,11 +165,13 @@ function resumeAudio() // resume paused audio
 
 function replayAudio() // replay audio
 {
+  if (debug)
+    console.log('replayAudio');
   options = JSON.parse(localStorage.getItem("options")); // must fix
   if (options.voice == google_tts_name) {
-    ttsRead(filterText(textstack));
+    ttsRead(filterText(textstack, true));
   } else {
-    TTS_Speak(textstack, false);
+    TTS_Speak(filterText(textstack, false), false);
   }
 }
 
@@ -259,13 +265,15 @@ function readingProblems() // displays reading problems notification in popup
  * ---------------------------------------------------------------------------------------------------------------------
  */
 function contextMenu(selection) {
+  if (debug)
+    console.log('contextMenu');
   options = JSON.parse(localStorage.getItem("options")); // must fix
   if (state != 'playing') {
     if (state == 'ready') {
       if (options.voice == google_tts_name) {
-        ttsRead(filterText(selection.selectionText.toString()));
+        ttsRead(filterText(selection.selectionText.toString(), true));
       } else {
-        TTS_Speak(selection.selectionText.toString(), true);
+        TTS_Speak(filterText(selection.selectionText.toString(), false), true);
       }
       textstack = selection.selectionText.toString();
     } else {
@@ -296,10 +304,11 @@ if (options.context) {
  * ---------------------------------------------------------------------------------------------------------------------
  */
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+  if (debug)
+    console.log('onRequest');
   options = JSON.parse(localStorage.getItem("options")); // must fix
   if (request.method === undefined) {
     if (request.text != undefined) {
-      text = filterText(request.text); // get selected and formated text
       if (state == 'playing') {
         var popups = chrome.extension.getViews({type : "popup"});
         if (popups.length == 0) {
@@ -309,12 +318,12 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         if (state == 'paused') {
           resumeAudio();
         } else {
-          if (text.length && text[0] != '') {
+          if (request.text.length && request.text[0] != '') {
             if (options.voice == google_tts_name) {
               nowPlaying();
-              ttsRead(text);
+              ttsRead(filterText(request.text, true));
             } else {
-              TTS_Speak(request.text, true);
+              TTS_Speak(filterText(request.text, false), true);
             }
           }
         }
@@ -396,45 +405,49 @@ function ttsRead(text) {
  *  Speak with new TTS Chrome API
  * ---------------------------------------------------------------------------------------------------------------------
  */
-function TTS_Speak(utterance, rp_state) {
+function TTS_Speak(sentences, rp_state) {
   options = JSON.parse(localStorage.getItem("options"));
-
-  if (debug)
-    console.log(utterance);
 
   if (rp_state) {
     nowPlaying();
   }
 
-  tts_options = {
-    voiceName : options.voice,
-    enqueue : Boolean(false),
-    rate : parseFloat(options.rate),
-    pitch : parseFloat(options.pitch),
-    volume : parseFloat(options.volume),
-  };
-  tts_options.onEvent = function(event) {
-    if (false) {
-      text.setSelectionRange(0, event.charIndex);
-    }
-    if (debug)
-      console.log('Event ' + event.type + ' at position ' + event.charIndex);
-    if (event.type == 'end' || event.type == 'interrupted' ||
-        event.type == 'cancelled' || event.type == 'error') {
-      chrome.tts.isSpeaking(function(isSpeaking) {
-        if (!isSpeaking) {
-          state = 'ready';
-        }
-      });
-    }
-  };
   state = 'playing';
   chrome.tts.stop();
-  chrome.tts.speak(utterance, tts_options, function() {
-    if (chrome.runtime.lastError) {
-      console.log('TTS Error: ' + chrome.runtime.lastError.message);
-    }
-  });
+  for (i in sentences) {
+    tts_options = {
+      voiceName : options.voice,
+      enqueue : Boolean(false),
+      rate : parseFloat(options.rate),
+      pitch : parseFloat(options.pitch),
+      volume : parseFloat(options.volume),
+    };
+    tts_options.onEvent = function(event) {
+      if (false) {
+        text.setSelectionRange(0, event.charIndex);
+      }
+      if (debug)
+        console.log('Event ' + event.type + ' at position ' + event.charIndex);
+      if (event.type == 'end' || event.type == 'interrupted' ||
+          event.type == 'cancelled' || event.type == 'error') {
+        chrome.tts.isSpeaking(function(isSpeaking) {
+          if (!isSpeaking) {
+            state = 'ready';
+          }
+        });
+      }
+    };
+    if (i > 0)
+      tts_options.enqueue = Boolean(true);
+
+    if (debug)
+      console.log("i:" + i + " " + sentences[i]);
+    chrome.tts.speak(sentences[i], tts_options, function() {
+      if (chrome.runtime.lastError) {
+        console.log('TTS Error: ' + chrome.runtime.lastError.message);
+      }
+    });
+  }
 }
 
 /*
@@ -443,14 +456,25 @@ function TTS_Speak(utterance, rp_state) {
  * Google Text to Speech API
  * ---------------------------------------------------------------------------------------------------------------------
  */
-function split(string, maxlength) {
+function split(string, maxlength, plus_join) {
   var result = [];
   (function(string) {
     var index = string.substring(maxlength).indexOf(" ");
-    if (index == -1)
-      return string ? result.push(string.split(' ').join('+')) : null;
-    result.push(
-        string.substring(0, index + maxlength + 1).trim().split(' ').join('+'));
+    if (index == -1) {
+      if (plus_join) {
+        return string ? result.push(string.split(' ').join('+')) : null;
+      } else {
+        return string ? result.push(string) : null;
+      }
+    }
+    if (plus_join) {
+      result.push(string.substring(0, index + maxlength + 1)
+                      .trim()
+                      .split(' ')
+                      .join('+'));
+    } else {
+      result.push(string.substring(0, index + maxlength + 1).trim());
+    }
     arguments.callee.call(window, string.substring(index + maxlength + 1));
   })(string);
   return result;
@@ -460,18 +484,17 @@ function beautify(string) {
   return string.replace(/([+.,])$/, '').replace(/^([+.,])/, '');
 }
 
-function filterText(text) {
-  var j = 0, str = [], tmpstr = [],
-      maxlength = 90, // Max length of one sentence this is Google's fault :)
-      badchars =
-          [
-            "+", "#", "@", "-", "<", ">", "\n", "!", "?", ":", "&", '"', "  ",
-            "。", "`"
-          ],
-      replaces = [
-        " plus ", " sharp ", " at ", "", "", "", "", ".", ".", ".", " and ",
-        " ", " ", ".", ""
-      ];
+function filterText(text, plus_join) {
+  var j = 0, str = [], tmpstr = [];
+  // Max length of one sentence this is Google's fault :)
+  maxlength = 90;
+  badchars = [
+    "+", "#", "@", "-", "<", ">", "\n", "!", "?", ":", "&", '"', "  ", "。", "`"
+  ];
+  replaces = [
+    " plus ", " sharp ", " at ", "", "", "", "", ".", ".", ".", " and ", " ",
+    " ", ".", ""
+  ];
 
   for (var i in badchars) // replacing bad chars
   {
@@ -482,20 +505,29 @@ function filterText(text) {
 
   for (var i in str) // join and group sentences
   {
+    str[i].trim();
     if (tmpstr[j] === undefined) {
       tmpstr[j] = '';
     }
 
     if ((tmpstr[j] + str[i]).length < maxlength) {
-      tmpstr[j] = tmpstr[j] + str[i].split(' ').join('+');
+      if (plus_join) {
+        tmpstr[j] += beautify(str[i].split(' ').join('+'));
+      } else {
+        tmpstr[j] += beautify(str[i]);
+      }
     } else {
       tmpstr[j] = beautify(tmpstr[j]);
 
       if (str[i].length < maxlength) {
         j++;
-        tmpstr[j] = beautify(str[i].split(' ').join('+'));
+        if (plus_join) {
+          tmpstr[j] = beautify(str[i].split(' ').join('+'));
+        } else {
+          tmpstr[j] = beautify(str[i]);
+        }
       } else {
-        sstr = split(str[i], maxlength);
+        sstr = split(str[i], maxlength, plus_join);
         for (x in sstr) {
           j++;
           tmpstr[j] = beautify(sstr[x]);
@@ -503,6 +535,7 @@ function filterText(text) {
       }
     }
   }
+
   return tmpstr.filter(String);
 }
 
