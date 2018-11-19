@@ -421,7 +421,7 @@ function TTS_Speak(sentences, rp_state) {
   state = 'playing';
 
   // FIXME: chrome tts has a bug. speak doesn't guarantee to start.
-  setTimeout(function() { chrome.tts.resume(); }, 100);
+  setTimeout(function() { chrome.tts.resume(); }, 60);
 }
 
 function ttsSpeakInternal(sentence, enqueue, i, total) {
@@ -450,7 +450,7 @@ function ttsSpeakInternal(sentence, enqueue, i, total) {
         chrome.tts.stop();
       } else {
         // FIXME: chrome tts has a bug. enqueue doesn't guarantee to continue.
-        chrome.tts.resume();
+        setTimeout(function() { chrome.tts.resume(); }, 60);
       }
     } else if (event.type == 'interrupted' || event.type == 'cancelled' ||
                event.type == 'error') {
@@ -520,7 +520,7 @@ function filterText(text, plus_join) {
     }
   }
 
-  str = text.split(/\.|\?|\!/, maxlength); // this is where magic happens :) :)
+  str = text.split(/\. |\? |\! /, maxlength); // this is where magic happens :) :)
   if (!plus_join) {
     return str.filter(function(el) { return el.trim().length > 0; });
   }
