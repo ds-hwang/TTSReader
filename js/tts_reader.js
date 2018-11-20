@@ -421,7 +421,7 @@ function TTS_Speak(sentences, rp_state) {
   state = 'playing';
 
   // FIXME: chrome tts has a bug. speak doesn't guarantee to start.
-  setTimeout(function() { chrome.tts.resume(); }, 60);
+  setTimeout(function() { chrome.tts.resume(); }, 100);
 }
 
 function ttsSpeakInternal(sentence, enqueue, i, total) {
@@ -450,7 +450,7 @@ function ttsSpeakInternal(sentence, enqueue, i, total) {
         chrome.tts.stop();
       } else {
         // FIXME: chrome tts has a bug. enqueue doesn't guarantee to continue.
-        setTimeout(function() { chrome.tts.resume(); }, 60);
+        setTimeout(function() { chrome.tts.resume(); }, 100);
       }
     } else if (event.type == 'interrupted' || event.type == 'cancelled' ||
                event.type == 'error') {
