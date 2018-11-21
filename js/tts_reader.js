@@ -501,31 +501,42 @@ function beautify(string) {
   return string.replace(/([+.,])$/, '').replace(/^([+.,])/, '');
 }
 
+function chunkString(str, length) {
+  return str.match(new RegExp('.{1,' + length + '}', 'g'));
+}
+
 function filterText(text, plus_join) {
-  var j = 0, str = [], tmpstr = [];
+  let j = 0, tmpstr = [];
   // Max length of one sentence this is Google's fault :)
-  maxlength = 300;
-  badchars = [
+  let maxlength = 300;
+  let badchars = [
     "+", "#", "@", "-", "<", ">", "\n", "!", "?", ":", "&", '"', "  ", "。", "`"
   ];
-  replaces = [
+  let replaces = [
     " plus ", " sharp ", " at ", "", "", "", "", ".", ".", ".", " and ", " ",
     " ", ".", ""
   ];
 
   if (plus_join) {
-    for (var i in badchars) // replacing bad chars
+    for (let i in badchars) // replacing bad chars
     {
       text = text.split(badchars[i]).join(replaces[i]);
     }
   }
 
-  str = text.split(/\. |\? |\! /, maxlength); // this is where magic happens :) :)
+  let str = text.split(/\. |\? |\! /); // this is where magic happens :) :)
   if (!plus_join) {
-    return str.filter(function(el) { return el.trim().length > 0; });
+    let ans = [];
+    for (let i in str) {
+      let sentence = str[i].trim();
+      if (sentence.length > 0) {
+        ans = ans.concat(chunkString(sentence, maxlength));
+      }
+    }
+    return ans;
   }
 
-  for (var i in str) // join and group sentences
+  for (let i in str) // join and group sentences
   {
     str[i].trim();
     if (tmpstr[j] === undefined) {
